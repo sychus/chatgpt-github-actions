@@ -34,7 +34,7 @@ jobs:
     runs-on: ubuntu-latest
     name: ChatGPT explain code
     steps:
-      - name: ChatGTP explain code
+      - name: ChatGTP review code
         uses: cirolini/chatgpt-github-actions@v1.3
         with:
           openai_api_key: ${{ secrets.openai_api_key }}
@@ -76,3 +76,4 @@ When sending code to the ChatGPT language model, it is important to consider the
 
 ## Contributors
 - **Glauber Borges** - [glauberborges](https://github.com/glauberborges)
+- **Sychus** - [sychus](https://github.com/sychus)

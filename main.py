@@ -47,7 +47,7 @@ def files():
             # Sending the code to ChatGPT
             response = openai.Completion.create(
                 engine=args.openai_engine,
-                prompt=(f"Review and lint Code:\n```{content}```"),
+                prompt=(f"Review Code:\n```{content}```"),
                 temperature=float(args.openai_temperature),
                 max_tokens=int(args.openai_max_tokens)
             )
