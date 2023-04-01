@@ -48,7 +48,7 @@ def files():
             response = openai.Completion.create(
                 engine=args.openai_engine,
                 prompt=(
-                    f"makes as accurate a code review as possible:\n```{content}```"),
+                    f"Review this code patch and suggest improvements and issues:\n```{content}```"),
                 temperature=float(args.openai_temperature),
                 max_tokens=int(args.openai_max_tokens)
             )
