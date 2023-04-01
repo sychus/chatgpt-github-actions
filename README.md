@@ -1,6 +1,6 @@
 # Code Review with ChatGPT
 
-This project aims to automate code review using the ChatGPT language model. It integrates  with Github Actions, and upon receiving a Pull Request, it automatically sends each code review to ChatGPT for an explanation.
+This project aims to automate code review using the ChatGPT language model. It integrates  with Github Actions, and upon receiving a Pull Request, it automatically sends each code review to ChatGPT.
 
 # Setup
 
@@ -32,36 +32,30 @@ on:
 jobs:
   hello_world_job:
     runs-on: ubuntu-latest
-    name: ChatGPT explain code
+    name: ChatGPT code reviewer
     steps:
-      - name: ChatGTP review code
-        uses: cirolini/chatgpt-github-actions@v1.3
+      - name: ChatGTP code reviewer code
+        uses: sychus/chatgpt-github-actions@v1.4
         with:
           openai_api_key: ${{ secrets.openai_api_key }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
           github_pr_id: ${{ github.event.number }}
-          openai_engine: "text-davinci-002" #optional
-          openai_temperature: 0.5 #optional
+          openai_engine: "gpt-3.5-turbo" #optional
+          openai_temperature: 0.2 #optional
           openai_max_tokens: 2048 #optional
           mode: file # file or patch 
 ```
 
-In the above workflow, the pull_request event triggers the workflow whenever a pull request is opened or synchronized. The workflow runs on the ubuntu-latest runner and uses the cirolini/chatgpt-github-actions@v1 action.
+In the above workflow, the pull_request event triggers the workflow whenever a pull request is opened or synchronized. The workflow runs on the ubuntu-latest runner
 
 The openai_api_key is passed from the secrets context, and the github_token is also passed from the secrets context. The github_pr_id is passed from the github.event.number context. The other three input parameters, openai_engine, openai_temperature, and openai_max_tokens, are optional and have default values.
 
-## How it works
-
 ### file
 This action is triggered when a pull request is opened or updated. The action authenticates with the OpenAI API using the provided API key, and with the Github API using the provided token. It then selects the repository using the provided repository name, and the pull request ID. 
-For each commit in the pull request, it gets the modified files, gets the file name and content, sends the code to ChatGPT for an explanation, and adds a comment to the pull request with ChatGPT's response.
+For each commit in the pull request, it gets the modified files, gets the file name and content, sends the code to ChatGPT for a code review and improvements, and adds a comment to the pull request with ChatGPT's response.
 
 ### patch
 Every PR has a file called patch which is where the difference between 2 files, the original and the one that was changed, is, this strategy consists of reading this file and asking the AI to summarize the changes made to it.
-
-Comments will appear like this:
-
-![chatgptcommentonpr](img/chatgpt-comment-on-pr.png "ChatGPT comment on PR")
 
 ## Security and Privacity
 
