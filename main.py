@@ -72,25 +72,33 @@ def patch():
     parsed_text = content.split("diff")
 
     for diff_text in parsed_text:
-        if len(diff_text) == 0:
+        if len(args.openai_max_tokens) == 0:
             continue
 
         try:
             file_name = diff_text.split("b/")[1].splitlines()[0]
             print(file_name)
-
-            response = openai.Completion.create(
-                engine=args.openai_engine,
-                prompt=(
-                    f"Summarize what was done in this diff:\n```{diff_text}```"),
-                temperature=float(args.openai_temperature),
-                max_tokens=int(args.openai_max_tokens)
-            )
-            print(response)
-            print(response['choices'][0]['text'])
+            parts = [diff_text[i:i+args.openai_max_tokens]
+                     for i in range(0, len(diff_text), args.openai_max_tokens)]
+            full_response = ""
+            text_parts = []
+            for part in parts:
+                response = openai.Completion.create(
+                    engine=args.openai_engine,
+                    prompt=(
+                        f"Summarize what was done in this diff:\n```{part}```"),
+                    max_tokens=int(args.openai_max_tokens),
+                    n=1,
+                    stop=None,
+                    temperature=float(args.openai_temperature)
+                )
+            text_parts.append(response.choices[0].text)
+            full_response = ''.join(text_parts)
+            print(full_response)
+            print(full_response['choices'][0]['text'])
 
             pull_request.create_issue_comment(
-                f"ChatGPT's response about ``{file_name}``:\n {response['choices'][0]['text']}")
+                f"ChatGPT's response about ``{file_name}``:\n {full_response['choices'][0]['text']}")
         except Exception as e:
             error_message = str(e)
             print(error_message)
